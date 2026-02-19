@@ -75,11 +75,11 @@ WSGI_APPLICATION = 'SocialMedia.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'SocialMedia',  # ← اسم دیتابیس
-        'USER': 'postgres',  # ← نام کاربری PostgreSQL
-        'PASSWORD': 'customerclub5',  # ← رمز عبور
-        'HOST': 'localhost',  # ← یا آدرس سرور
-        'PORT': '5432',  # ← پورت پیش‌فرض PostgreSQL
+        'NAME': 'SocialMedia',  
+        'USER': '',  
+        'PASSWORD': '', 
+        'HOST': 'localhost', 
+        'PORT': '5432',  
     }
 }
 
