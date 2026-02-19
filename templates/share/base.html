@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block links %}
+
+    {% endblock %}
+    {% block style %}
+
+    {% endblock %}
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+
+
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>
+
+{% block scripts %}
+
+{% endblock %}
+</body>
+</html>

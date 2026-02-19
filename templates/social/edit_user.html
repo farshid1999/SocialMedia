@@ -1,0 +1,1454 @@
+{% extends 'share/base.html' %}
+{% load static %}
+
+{% block links %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"
+          crossorigin="anonymous">
+
+    {#    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">#}
+    {#    <link rel="stylesheet" href="{% static 'css/base.css' %}">#}
+{% endblock %}
+
+{% block style %}
+    <style>
+        /* ======= CSS Custom Properties ======= */
+        :root {
+            --gradient-1: #0f172a; /* مشکی عمیق با ته‌مایل آبی */
+            --gradient-2: #1e40af; /* آبی نئونی تیره */
+            --gradient-3: #334155; /* خاکستری تیره مدرن */
+            --glass-bg: rgba(255, 255, 255, 0.12); /* پس‌زمینه شیشه‌ای با شفافیت بیشتر */
+            --glass-border: rgba(255, 255, 255, 0.25); /* حاشیه شیشه‌ای کمی برجسته‌تر */
+            --text-primary: #f8fafc; /* سفید درخشان برای متن اصلی */
+            --text-secondary: rgba(203, 213, 225, 0.9); /* خاکستری روشن برای متن ثانویه */
+            --text-muted: rgba(148, 163, 184, 0.7); /* خاکستری ملایم برای متن کم‌رنگ */
+            --accent-color: #facc15; /* طلایی متالیک برای اکسنت */
+            --success-color: #10b981; /* سبز برای موفقیت */
+            --error-color: #ef4444; /* قرمز برای خطا */
+            --warning-color: #f59e0b; /* نارنجی برای هشدار */
+            --shadow-light: 0 6px 24px rgba(0, 0, 0, 0.5); /* سایه نرم‌تر */
+            --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.7); /* سایه قوی‌تر برای هاور */
+            --border-radius: 12px; /* گوشه‌های نرم‌تر برای ظاهر مدرن */
+            --border-radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ======= Base Styles ======= */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 50%, var(--gradient-3) 100%);
+            background-size: 200% 200%;
+            animation: gradientLineFlow 8s ease infinite;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientLineFlow {
+            0% {
+                background-position: 100% 100%; /* شروع از گوشه پایین راست */
+            }
+            50% {
+                background-position: 0% 0%; /* حرکت به گوشه بالای چپ */
+            }
+            100% {
+                background-position: 100% 100%; /* بازگشت به گوشه پایین راست */
+            }
+        }
+
+        /* ======= Main Container ======= */
+        .edit-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .edit-card {
+            backdrop-filter: blur(20px) saturate(180%);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .edit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+        }
+
+        /* ======= Header Section ======= */
+        .edit-header {
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .edit-header h1 {
+            margin: 0 0 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--text-primary), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .edit-header p {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        /* ======= Input Styles ======= */
+        .form-group {
+            position: relative; /* برای قرار دادن آیکون‌ها یا افکت‌های داخلی */
+            margin-bottom: 1.75rem; /* افزایش فاصله برای خوانایی بیشتر */
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem; /* فاصله بیشتر بین لیبل و input */
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem; /* فونت کمی بزرگ‌تر برای خوانایی */
+            transition: var(--transition);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.9rem 1.25rem; /* padding بیشتر برای راحتی تایپ */
+            background: rgba(255, 255, 255, 0.08); /* پس‌زمینه کمی روشن‌تر برای تمایز */
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            backdrop-filter: blur(12px); /* بلور کمی قوی‌تر */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* سایه داخلی ظریف */
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.12); /* تغییر پس‌زمینه در فوکوس */
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.25), /* گلو ملایم‌تر */ inset 0 1px 3px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px); /* حرکت عمودی ظریف هنگام فوکوس */
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7; /* کاهش شفافیت برای تمایز */
+            font-style: italic; /* ایتالیک برای placeholder */
+        }
+
+        /* آیکون‌های داخل input‌ها */
+        .form-group.has-icon {
+            position: relative;
+        }
+
+        .form-group.has-icon .form-control {
+            padding-right: 2.5rem; /* فضای کافی برای آیکون */
+        }
+
+        .form-group.has-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            z-index: 1;
+        }
+
+        .form-group.has-icon.email::before {
+            content: '\f0e0'; /* آیکون ایمیل */
+        }
+
+        .form-group.has-icon.first-name::before {
+            content: '\f007'; /* آیکون کاربر */
+        }
+
+        .form-group.has-icon.last-name::before {
+            content: '\f007'; /* آیکون کاربر */
+        }
+
+        .form-group.has-icon.bio::before {
+            content: '\f303'; /* آیکون قلم */
+        }
+
+        .form-group.has-icon.phone::before {
+            content: '\f095'; /* آیکون تلفن */
+        }
+
+        .form-group.has-icon.username::before {
+            content: '\f2bd'; /* آیکون نام کاربری */
+        }
+
+        .form-group.has-icon.date-of-birth::before {
+            content: '\f073'; /* آیکون تقویم */
+        }
+
+        .form-group.has-icon.job::before {
+            content: '\f0b1'; /* آیکون شغل */
+        }
+
+        /* افکت برای textarea */
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px; /* ارتفاع کمی بیشتر */
+            padding: 1rem; /* padding هماهنگ‌تر */
+        }
+
+        /* استایل برای input نوع date */
+        .form-control[type="date"] {
+            appearance: none; /* حذف استایل پیش‌فرض مرورگر */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-right: 2.5rem; /* فضای کافی برای آیکون تقویم */
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* استایل برای نمایش تاریخ در مرورگرهای مختلف */
+        .form-control[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.7); /* تنظیم رنگ آیکون تقویم در کروم */
+            cursor: pointer;
+        }
+
+        /* خطای فیلد */
+        .form-control.is-invalid {
+            border-color: var(--error-color);
+            background: rgba(239, 68, 68, 0.08); /* پس‌زمینه خطا ملایم‌تر */
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        .field-error {
+            color: var(--error-color);
+            font-size: 0.8rem; /* فونت کوچکتر برای خطاها */
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .field-error::before {
+            content: '\f071'; /* آیکون هشدار */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.75rem;
+        }
+
+        /* افکت هاور */
+        .form-control:hover:not(:focus):not(.is-invalid) {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ======= File Upload Styles ======= */
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-input {
+            position: absolute;
+            opacity: 0;
+            width: 0.1px;
+            height: 0.1px;
+            overflow: hidden;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--glass-border);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-weight: 500;
+            min-height: 120px;
+            flex-direction: column;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .file-upload-label i {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+
+        .file-upload-text {
+            text-align: center;
+        }
+
+        .file-upload-subtext {
+            fontfood: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .file-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--glass-border);
+            object-fit: cover;
+        }
+
+        .current-image {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .current-image img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--glass-border);
+            object-fit: cover;
+        }
+
+        .current-image-label {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* ======= Error Handling ======= */
+        .form-errors {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-errors h4 {
+            color: var(--error-color);
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .form-errors ul {
+            margin: 0;
+            padding-right: 1.25rem;
+            color: rgba(239, 68, 68, 0.9);
+        }
+
+        /* ======= Messages ======= */
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success-color);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--error-color);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning-color);
+        }
+
+        /* ======= Action Buttons ======= */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 0.875rem 2rem;
+            border: 2px solid var(--glass-border);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-color), #ffed4a);
+            color: #1a1a1a;
+            border-color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            color: #1a1a1a;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border-color: var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ======= Loading States ======= */
+        .btn.loading {
+            pointer-events: none;
+        }
+
+        .btn.loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ======= Progress Indicator ======= */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 0 2rem;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .progress-step.active {
+            background: var(--accent-color);
+            color: #1a1a1a;
+        }
+
+        .progress-step.completed {
+            background: var(--success-color);
+            color: white;
+        }
+
+        /* ======= Responsive Design ======= */
+        @media (max-width: 768px) {
+            .edit-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .edit-header {
+                padding: 1.5rem 1rem 1rem;
+            }
+
+            .edit-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .back-button {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .edit-form {
+                padding: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .form-control {
+                padding: 0.75rem 1rem; /* padding کمتر در موبایل */
+                font-size: 0.95rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+            }
+
+            .form-control[type="date"] {
+                font-size: 0.9rem; /* فونت کوچکتر در موبایل */
+            }
+        }
+
+        /* ======= Accessibility ======= */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .form-control,
+            .form-control:focus,
+            .form-control:hover {
+                transition: none;
+            }
+        }
+
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+
+        .form-control:focus,
+        .btn:focus,
+        .file-upload-label:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* ===== فرم عمومی ===== */
+        .edit-form {
+            font-family: 'IRANSans', sans-serif;
+            color: #fff;
+        }
+
+        /* ===== هر بخش از فرم ===== */
+        .form-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ===== عنوان هر بخش ===== */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== فیلدها ===== */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+            color: #f1f1f1;
+        }
+
+        /* ===== input و select ===== */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        /* placeholder */
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* فوکوس */
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+        }
+
+        /* ===== خطای فیلد ===== */
+        .field-error {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+
+        /* ===== دکمه‌ها ===== */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .form-actions .btn {
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ===== ریسپانسیو ===== */
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <main class="edit-container" role="main">
+        <div class="edit-card">
+            <!-- Back Button -->
+            <a href="{% url 'social:profile' %}" class="back-button" aria-label="بازگشت به پروفایل">
+                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+
+            <!-- Header -->
+            <header class="edit-header">
+                <h1>ویرایش پروفایل</h1>
+                <p>اطلاعات خود را به‌روزرسانی کنید</p>
+            </header>
+
+            <!-- Progress Steps -->
+            <div class="progress-steps" aria-label="مراحل تکمیل پروفایل">
+                <div class="progress-step active" aria-label="مرحله ۱: اطلاعات شخصی">۱</div>
+                <div class="progress-step" aria-label="مرحله ۲: تصویر پروفایل">۲</div>
+                <div class="progress-step" aria-label="مرحله ۳: تأیید نهایی">۳</div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                <div class="edit-form">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" role="alert">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"
+                               aria-hidden="true"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Form Errors -->
+            {% if user_form.non_field_errors %}
+                <div class="edit-form">
+                    <div class="form-errors" role="alert">
+                        <h4><i class="fas fa-exclamation-triangle me-2" aria-hidden="true"></i>خطاهای فرم</h4>
+                        <ul>
+                            {% for error in user_form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Main Form -->
+            <form method="post" enctype="multipart/form-data" class="edit-form" id="editUserForm" novalidate>
+                {% csrf_token %}
+
+
+                <!-- Profile Image Section (unchanged) -->
+                {% if user_form.photo %}
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-camera" aria-hidden="true"></i>
+                            تصویر پروفایل
+                        </h2>
+                        {% if request.user.photo %}
+                            <div class="current-image">
+                                <img src="{{ request.user.photo.url }}" alt="تصویر فعلی پروفایل">
+                                <span class="current-image-label">تصویر فعلی</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <div class="file-upload-wrapper">
+                                <div class="d-none">{{ user_form.photo }}</div>
+                                <label for="{{ user_form.photo.id_for_label }}" class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div class="file-upload-text">
+                                        <div>تصویر جدید انتخاب کنید</div>
+                                        <div class="file-upload-subtext">JPG، PNG یا GIF - حداکثر 5MB</div>
+                                    </div>
+                                </label>
+                            </div>
+                            {% if user_form.photo.errors %}
+                                <div class="field-error">{{ user_form.photo.errors.0 }}</div>
+                            {% endif %}
+                            <div class="file-preview" id="imagePreview"></div>
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-user" aria-hidden="true"></i>
+                        اطلاعات شخصی
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-icon first-name">
+                                <label for="{{ user_form.first_name.id_for_label }}" class="form-label">
+                                    نام {% if user_form.first_name.field.required %}
+                                    <span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ user_form.first_name }}
+                                {% if user_form.first_name.errors %}
+                                    <div class="field-error">{{ user_form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group has-icon last-name">
+                                <label for="{{ user_form.last_name.id_for_label }}" class="form-label">
+                                    نام خانوادگی {% if user_form.last_name.field.required %}
+                                    <span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ user_form.last_name }}
+                                {% if user_form.last_name.errors %}
+                                    <div class="field-error">{{ user_form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-icon email">
+                                <label for="{{ user_form.email.id_for_label }}" class="form-label">
+                                    ایمیل {% if user_form.email.field.required %}
+                                    <span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ user_form.email }}
+                                {% if user_form.email.errors %}
+                                    <div class="field-error">{{ user_form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group has-icon phone">
+                                <label for="{{ user_form.phone.id_for_label }}" class="form-label">
+                                    شماره تلفن {% if user_form.phone.field.required %}
+                                    <span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ user_form.phone }}
+                                {% if user_form.phone.errors %}
+                                    <div class="field-error">{{ user_form.phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-icon username">
+                                <label for="{{ user_form.username.id_for_label }}" class="form-label">
+                                    نام کاربری {% if user_form.username.field.required %}
+                                    <span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ user_form.username }}
+                                {% if user_form.username.errors %}
+                                    <div class="field-error">{{ user_form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group has-icon date-of-birth">
+                                <label for="{{ user_form.date_of_birth.id_for_label }}" class="form-label">
+                                    تاریخ تولد {% if user_form.date_of_birth.field.required %}
+                                    <span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ user_form.date_of_birth }}
+                                {% if user_form.date_of_birth.errors %}
+                                    <div class="field-error">{{ user_form.date_of_birth.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-icon job">
+                        <label for="{{ user_form.job.id_for_label }}" class="form-label">
+                            شغل {% if user_form.job.field.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        {{ user_form.job }}
+                        {% if user_form.job.errors %}
+                            <div class="field-error">{{ user_form.job.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if user_form.bio %}
+                        <div class="form-group has-icon bio">
+                            <label for="{{ user_form.bio.id_for_label }}" class="form-label">
+                                بیوگرافی
+                            </label>
+                            {{ user_form.bio }}
+                            {% if user_form.bio.errors %}
+                                <div class="field-error">{{ user_form.bio.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save"></i> ذخیره تغییرات
+                    </button>
+                    <a href="{% url 'social:profile' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"></script>
+
+    <script>
+        // Enhanced Form Handler Class
+        class EditProfileForm {
+            constructor() {
+                this.form = document.getElementById('editUserForm');
+                this.submitBtn = document.getElementById('submitBtn');
+                this.fileInput = document.querySelector('input[type="file"]');
+                this.imagePreview = document.getElementById('imagePreview');
+                this.progressSteps = document.querySelectorAll('.progress-step');
+                this.init();
+            }
+
+            init() {
+                this.setupFormValidation();
+                this.setupFilePreview();
+                this.setupProgressIndicator();
+                this.setupFormSubmission();
+                this.setupKeyboardNavigation();
+            }
+
+            setupFormValidation() {
+                const inputs = this.form.querySelectorAll('.form-control');
+                inputs.forEach(input => {
+                    input.addEventListener('blur', (e) => this.validateField(e.target));
+                    input.addEventListener('input', (e) => this.clearFieldError(e.target));
+                });
+            }
+
+            validateField(field) {
+                const value = field.value.trim();
+                const fieldType = field.type;
+                const fieldName = field.name;
+                const isRequired = field.hasAttribute('required');
+
+                this.clearFieldError(field);
+
+                if (isRequired && !value) {
+                    this.showFieldError(field, 'این فیلد الزامی است.');
+                    return false;
+                }
+
+                if (fieldType === 'email' && value) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) {
+                        this.showFieldError(field, 'فرمت ایمیل صحیح نیست.');
+                        return false;
+                    }
+                }
+
+                if ((fieldName === 'first_name' || fieldName === 'last_name' || fieldName === 'username' || fieldName === 'job') && value) {
+                    const nameRegex = /^[\u0600-\u06FFa-zA-Z\s]+$/;
+                    if (!nameRegex.test(value)) {
+                        this.showFieldError(field, 'فقط حروف فارسی و انگلیسی مجاز است.');
+                        return false;
+                    }
+                }
+
+                if (fieldName === 'phone' && value) {
+                    const phoneRegex = /^(\+98|0)?9\d{9}$/;
+                    if (!phoneRegex.test(value)) {
+                        this.showFieldError(field, 'شماره تلفن معتبر نیست.');
+                        return false;
+                    }
+                }
+
+                if (fieldName === 'date_of_birth' && value) {
+                    const date = new Date(value);
+                    const today = new Date();
+                    if (isNaN(date.getTime()) || date > today) {
+                        this.showFieldError(field, 'تاریخ تولد معتبر نیست.');
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            showFieldError(field, message) {
+                field.classList.add('is-invalid');
+                const existingError = field.parentNode.querySelector('.field-error');
+                if (existingError) existingError.remove();
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.setAttribute('role', 'alert');
+                errorDiv.textContent = message;
+                field.parentNode.appendChild(errorDiv);
+            }
+
+            clearFieldError(field) {
+                field.classList.remove('is-invalid');
+                const errorDiv = field.parentNode.querySelector('.field-error');
+                if (errorDiv) errorDiv.remove();
+            }
+
+            setupFilePreview() {
+                if (!this.fileInput) return;
+
+                this.fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (!this.validateFile(file)) return;
+                        this.showImagePreview(file);
+                        this.updateProgressStep(2, 'completed');
+                    } else {
+                        this.clearImagePreview();
+                        this.updateProgressStep(2, '');
+                    }
+                });
+            }
+
+            validateFile(file) {
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    this.showAlert('حجم فایل نباید بیش از 5 مگابایت باشد.', 'error');
+                    return false;
+                }
+
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    this.showAlert('فرمت فایل پشتیبانی نمی‌شود. لطفاً JPG، PNG یا GIF استفاده کنید.', 'error');
+                    return false;
+                }
+
+                return true;
+            }
+
+            showImagePreview(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imagePreview.innerHTML = `
+                <img src="${e.target.result}" alt="پیش‌نمایش تصویر" style="max-width: 150px; max-height: 150px; border-radius: 12px; border: 2px solid var(--glass-border); object-fit: cover;">
+                <p style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">پیش‌نمایش تصویر جدید</p>
+            `;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            clearImagePreview() {
+                this.imagePreview.innerHTML = '';
+            }
+
+            setupProgressIndicator() {
+                const inputs = this.form.querySelectorAll('.form-control[required]');
+                let completedFields = 0;
+
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        completedFields = Array.from(inputs).filter(inp => inp.value.trim() !== '').length;
+                        const progress = Math.ceil((completedFields / inputs.length) * 2);
+
+                        for (let i = 1; i <= progress; i++) {
+                            this.updateProgressStep(i, i === progress ? 'active' : 'completed');
+                        }
+
+                        for (let i = progress + 1; i <= 3; i++) {
+                            this.updateProgressStep(i, '');
+                        }
+                    });
+                });
+            }
+
+            updateProgressStep(stepNumber, state) {
+                const step = this.progressSteps[stepNumber - 1];
+                if (!step) return;
+
+                step.className = `progress-step ${state}`;
+                step.innerHTML = state === 'completed' ? '<i class="fas fa-check" aria-hidden="true"></i>' : stepNumber;
+            }
+
+            setupFormSubmission() {
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleFormSubmit();
+                });
+            }
+
+            async handleFormSubmit() {
+                const inputs = this.form.querySelectorAll('.form-control');
+                let isValid = true;
+
+                inputs.forEach(input => {
+                    if (!this.validateField(input)) isValid = false;
+                });
+
+                if (!isValid) {
+                    this.showAlert('لطفاً خطاهای فرم را بررسی کنید.', 'error');
+                    return;
+                }
+
+                this.setLoadingState(true);
+                this.updateProgressStep(3, 'active');
+
+                try {
+                    const formData = new FormData(this.form);
+                    const response = await fetch(this.form.action || window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        this.updateProgressStep(3, 'completed');
+                        this.showAlert('پروفایل شما با موفقیت به‌روزرسانی شد!', 'success');
+                        setTimeout(() => {
+                            window.location.href = result.redirect_url || '/profile/';
+                        }, 1500);
+                    } else {
+                        throw new Error(result.message || 'خطا در ارسال فرم');
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    this.showAlert('خطایی در ارسال فرم رخ داد. لطفاً مجدداً تلاش کنید.', 'error');
+                    this.updateProgressStep(3, '');
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            setLoadingState(isLoading) {
+                this.submitBtn.classList.toggle('loading', isLoading);
+                this.submitBtn.disabled = isLoading;
+                this.submitBtn.innerHTML = isLoading
+                    ? '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> در حال ذخیره...'
+                    : '<i class="fas fa-save" aria-hidden="true"></i> ذخیره تغییرات';
+            }
+
+            setupKeyboardNavigation() {
+                const focusableElements = this.form.querySelectorAll(
+                    'input, textarea, button, select, [tabindex]:not([tabindex="-1"])'
+                );
+
+                focusableElements.forEach((element, index) => {
+                    element.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' && element.type !== 'textarea') {
+                            e.preventDefault();
+                            if (index < focusableElements.length - 1) {
+                                focusableElements[index + 1].focus();
+                            } else {
+                                this.handleFormSubmit();
+                            }
+                        }
+                    });
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !this.submitBtn.disabled) {
+                        const cancelBtn = document.querySelector('.btn-secondary');
+                        if (cancelBtn) cancelBtn.click();
+                    }
+                });
+            }
+
+            showAlert(message, type = 'info') {
+                const existingAlerts = document.querySelectorAll('.dynamic-alert');
+                existingAlerts.forEach(alert => alert.remove());
+
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} dynamic-alert`;
+                alertDiv.setAttribute('role', 'alert');
+
+                const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+                alertDiv.innerHTML = `
+            <i class="fas fa-${icon} me-2" aria-hidden="true"></i>
+            ${message}
+            <button type="button" class="btn-close" style="position: absolute; top: 0.5rem; left: 0.5rem;" onclick="this.parentElement.remove()">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        `;
+
+                const formContainer = document.querySelector('.edit-form');
+                formContainer.insertBefore(alertDiv, formContainer.firstChild);
+
+                if (type === 'success') {
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) alertDiv.remove();
+                    }, 5000);
+                }
+
+                alertDiv.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }
+        }
+
+        // Auto-save functionality
+        class AutoSave {
+            constructor(form) {
+                this.form = form;
+                this.saveKey = `autosave_${window.location.pathname}`;
+                this.saveTimeout = null;
+                this.init();
+            }
+
+            init() {
+                this.loadSavedData();
+                const inputs = this.form.querySelectorAll('input:not([type="file"]), textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        clearTimeout(this.saveTimeout);
+                        this.saveTimeout = setTimeout(() => this.saveData(), 2000);
+                    });
+                });
+                this.form.addEventListener('submit', () => this.clearSavedData());
+            }
+
+            saveData() {
+                const formData = {};
+                const inputs = this.form.querySelectorAll('input:not([type="file"]):not([type="password"]), textarea');
+                inputs.forEach(input => {
+                    if (input.name && input.value) formData[input.name] = input.value;
+                });
+
+                try {
+                    localStorage.setItem(this.saveKey, JSON.stringify({
+                        data: formData,
+                        timestamp: Date.now()
+                    }));
+                    this.showSaveIndicator();
+                } catch (error) {
+                    console.warn('Auto-save failed:', error);
+                }
+            }
+
+            loadSavedData() {
+                try {
+                    const savedData = localStorage.getItem(this.saveKey);
+                    if (!savedData) return;
+
+                    const {data, timestamp} = JSON.parse(savedData);
+                    if (Date.now() - timestamp > 24 * 60 * 60 * 1000) {
+                        this.clearSavedData();
+                        return;
+                    }
+
+                    Object.entries(data).forEach(([name, value]) => {
+                        const input = this.form.querySelector(`[name="${name}"]`);
+                        if (input && !input.value) input.value = value;
+                    });
+
+                    if (Object.keys(data).length > 0) this.showRestoreNotification();
+                } catch (error) {
+                    console.warn('Failed to load auto-saved data:', error);
+                    this.clearSavedData();
+                }
+            }
+
+            clearSavedData() {
+                try {
+                    localStorage.removeItem(this.saveKey);
+                } catch (error) {
+                    console.warn('Failed to clear auto-saved data:', error);
+                }
+            }
+
+            showSaveIndicator() {
+                let indicator = document.getElementById('auto-save-indicator');
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'auto-save-indicator';
+                    indicator.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: var(--border-radius);
+                font-size: 0.875rem;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+                    document.body.appendChild(indicator);
+                }
+
+                indicator.innerHTML = '<i class="fas fa-check me-2" aria-hidden="true"></i>ذخیره خودکار';
+                indicator.style.opacity = '1';
+                setTimeout(() => indicator.style.opacity = '0', 2000);
+            }
+
+            showRestoreNotification() {
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-warning';
+                notification.innerHTML = `
+            <i class="fas fa-info-circle me-2" aria-hidden="true"></i>
+            داده‌های ذخیره شده خودکار بازیابی شد.
+            <button type="button" class="btn btn-sm btn-secondary ms-2" onclick="location.reload()">بازنشانی فرم</button>
+        `;
+                const formContainer = document.querySelector('.edit-form');
+                formContainer.insertBefore(notification, formContainer.firstChild);
+            }
+        }
+
+        // Accessibility enhancements
+        class AccessibilityEnhancer {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupAriaLabels();
+                this.setupFocusManagement();
+                this.setupScreenReaderAnnouncements();
+            }
+
+            setupAriaLabels() {
+                const helpTexts = document.querySelectorAll('.file-upload-subtext, .field-error');
+                helpTexts.forEach(help => {
+                    const field = help.closest('.form-group')?.querySelector('.form-control');
+                    if (field && !field.getAttribute('aria-describedby')) {
+                        const helpId = 'help-' + Math.random().toString(36).substr(2, 9);
+                        help.id = helpId;
+                        field.setAttribute('aria-describedby', helpId);
+                    }
+                });
+            }
+
+            setupFocusManagement() {
+                const form = document.getElementById('editUserForm');
+                const focusableElements = form.querySelectorAll(
+                    'input, textarea, button, select, [tabindex]:not([tabindex="-1"])'
+                );
+
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                form.addEventListener('keydown', (e) => {
+                    if (e.key === 'Tab') {
+                        if (e.shiftKey && document.activeElement === firstElement) {
+                            e.preventDefault();
+                            lastElement.focus();
+                        } else if (!e.shiftKey && document.activeElement === lastElement) {
+                            e.preventDefault();
+                            firstElement.focus();
+                        }
+                    }
+                });
+            }
+
+            setupScreenReaderAnnouncements() {
+                const liveRegion = document.createElement('div');
+                liveRegion.setAttribute('aria-live', 'polite');
+                liveRegion.setAttribute('aria-atomic', 'true');
+                liveRegion.className = 'sr-only';
+                liveRegion.id = 'live-announcements';
+                document.body.appendChild(liveRegion);
+            }
+
+            announce(message) {
+                const liveRegion = document.getElementById('live-announcements');
+                if (liveRegion) {
+                    liveRegion.textContent = message;
+                    setTimeout(() => liveRegion.textContent = '', 1000);
+                }
+            }
+        }
+
+        // Initialize components
+        document.addEventListener('DOMContentLoaded', () => {
+            const editForm = new EditProfileForm();
+            const autoSave = new AutoSave(document.getElementById('editUserForm'));
+            const accessibility = new AccessibilityEnhancer();
+            window.announceToScreenReader = (message) => accessibility.announce(message);
+
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => document.body.style.opacity = '1', 100);
+        });
+
+        // Prevent form resubmission
+        window.addEventListener('beforeunload', (e) => {
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn && submitBtn.disabled) {
+                e.preventDefault();
+                e.returnValue = 'فرم در حال ارسال است. آیا مطمئن هستید که می‌خواهید صفحه را ببندید؟';
+            }
+        });
+    </script>
+{% endblock %}

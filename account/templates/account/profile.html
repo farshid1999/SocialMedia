@@ -1,0 +1,26 @@
+<!-- forms/profile.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>پروفایل {{ user.username }}</h2>
+
+<div style="margin-bottom: 20px;">
+    {% if user.photo %}
+        <img src="{{ user.photo.url }}" alt="عکس پروفایل" style="width: 150px; height: 150px; border-radius: 50%;">
+    {% else %}
+        <p>عکس پروفایل نداری</p>
+    {% endif %}
+</div>
+
+<ul>
+    <li><strong>نام کاربری:</strong> {{ user.username }}</li>
+    <li><strong>ایمیل:</strong> {{ user.email }}</li>
+    <li><strong>شماره تماس:</strong> {{ user.phone }}</li>
+    <li><strong>تاریخ تولد:</strong> {{ user.date_of_birth }}</li>
+    <li><strong>بیوگرافی:</strong> {{ user.bio }}</li>
+    <li><strong>شغل:</strong> {{ user.job }}</li>
+</ul>
+
+<a href="{% url 'edit_user' %}" class="btn btn-warning">ویرایش پروفایل</a>
+
+{% endblock %}

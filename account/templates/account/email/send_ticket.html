@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #f0f0f0, #e8eaf6);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(-30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .email-header {
+            background: linear-gradient(45deg, #3f51b5, #5c6bc0);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .email-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .email-content {
+            padding: 30px;
+            line-height: 1.7;
+        }
+
+        .email-footer {
+            background: #eeeeee;
+            padding: 15px;
+            text-align: center;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .context-block {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .context-block p {
+            margin: 5px 0;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="email-container">
+    <div class="email-header">
+        <h1>{{ subject }}</h1>
+    </div>
+
+    <div class="email-content">
+        <p>سلام {{ username }} عزیز،</p>
+        <p>درخواست جدید شما با موفقیت ثبت شد. جزئیات درخواست در ادامه آمده است:</p>
+
+        <div class="context-block">
+            <p><span style="color: #3f51b5;">عنوان:</span> {{ title }}</p>
+            <p><span style="color: #3f51b5;">توضیحات:</span> {{ message }}</p>
+        </div>
+
+        <a class="btn" href="{{ url }}">مشاهده تیکت</a>
+    </div>
+
+    <div class="email-footer">
+        این پیام به صورت خودکار ارسال شده است. لطفا به آن پاسخ ندهید.
+    </div>
+</div>
+
+</body>
+</html>

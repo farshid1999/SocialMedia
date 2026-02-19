@@ -1,0 +1,14 @@
+<!-- forms/edit_user.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>ویرایش پروفایل</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+</form>
+
+{% endblock %}
